@@ -334,7 +334,7 @@ namespace FrankHileman.MedianFilter2D
 			int size;
 			const int NAN_MARKER = -1;
 
-			readonly struct Entry
+			readonly struct Entry : IComparable<Entry>, IEquatable<Entry>
 			{
 				public Entry(double value, int slot)
 				{
@@ -344,6 +344,16 @@ namespace FrankHileman.MedianFilter2D
 
 				public readonly double Value;
 				public readonly int Slot;
+
+				public int CompareTo(Entry other)
+				{
+					// For std:pair, where Value is first:
+					// (a, b) < (c, d)  <=>  a < c || (a == c && b < d)
+					int ret = Value.CompareTo(other.Value);
+					return ret == 0 ? Slot.CompareTo(other.Slot) : ret;
+				}
+
+				public bool Equals(Entry other) => Value == other.Value && Slot == other.Slot;
 			}
 		}
 
