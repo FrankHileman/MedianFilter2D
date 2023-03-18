@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~M:FrankHileman.MedianFilter2DTests.QuickTest.check_1d(System.Int32,System.Int32,System.Double[],System.Double[],System.Double[])")]
+[assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~M:FrankHileman.MedianFilter2DTests.QuickTest.Check1d(System.Int32,System.Int32,System.Double[],System.Double[],System.Double[])")]

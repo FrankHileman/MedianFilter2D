@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrankHileman.MedianFilter2D
 {
@@ -52,7 +48,6 @@ namespace FrankHileman.MedianFilter2D
 
 		// From: https://stackoverflow.com/a/37112058/756014
 		const ulong DeBruijnSequence = 0x37E84A99DAE458F;
-
 		static readonly int[] MultiplyDeBruijnBitPosition =
 		{
 			0, 1, 17, 2, 18, 50, 3, 57,
@@ -77,25 +72,26 @@ namespace FrankHileman.MedianFilter2D
 			return MultiplyDeBruijnBitPosition[((ulong)((long)b & -(long)b) * DeBruijnSequence) >> 58];
 		}
 
-		public void median_filter_2d(int x, int y, int hx, int hy, int blockhint, double[] input, double[] output)
+		public void MedianFilter2d(int x, int y, int hx, int hy, int blockhint, double[] input, double[] output)
 		{
 			int h = Math.Max(hx, hy);
 			int blocksize = blockhint > 0 ? blockhint : choose_blocksize_2d(h);
-			median_filter_impl_2d(x, y, hx, hy, blocksize, input, output);
+			MedianFilter2dCore(x, y, hx, hy, blocksize, input, output);
 		}
 
-		public void median_filter_1d(int x, int hx, int blockhint, double[] input, double[] output)
+		public void MedianFilter1d(int x, int hx, int blockhint, double[] input, double[] output)
 		{
 			int blocksize = blockhint > 0 ? blockhint : choose_blocksize_1d(hx);
-			median_filter_impl_1d(x, hx, blocksize, input, output);
+			MedianFilter1dCore(x, hx, blocksize, input, output);
 		}
 
-		void median_filter_impl_2d(int x, int y, int hx, int hy, int b, double[] input, double[] output)
+		void MedianFilter2dCore(int x, int y, int hx, int hy, int b, double[] input, double[] output)
 		{
 			if (2 * hx + 1 > b)
 				throw new ArgumentOutOfRangeException(nameof(hx), "window too large for this block size");
 			if (2 * hy + 1 > b)
 				throw new ArgumentOutOfRangeException(nameof(hy), "window too large for this block size");
+
 			var dimx = new Dim(b, x, hx);
 			var dimy = new Dim(b, y, hy);
 			{
@@ -108,10 +104,11 @@ namespace FrankHileman.MedianFilter2D
 			}
 		}
 
-		void median_filter_impl_1d(int x, int hx, int b, double[] input, double[] output)
+		void MedianFilter1dCore(int x, int hx, int b, double[] input, double[] output)
 		{
 			if (2 * hx + 1 > b)
 				throw new ArgumentOutOfRangeException(nameof(hx), "window too large for this block size");
+
 			var dimx = new Dim(b, x, hx);
 			{
 				var mc = new MedCalc1D(b, dimx, input, output);
@@ -145,6 +142,7 @@ namespace FrankHileman.MedianFilter2D
 			{
 				if (size <= b)
 					return 1;
+
 				int interior = size - 2 * h;
 				int step = calc_step(b, h);
 				return (interior + step - 1) / step;
@@ -207,6 +205,7 @@ namespace FrankHileman.MedianFilter2D
 			{
 				for (int i = 0; i < words; ++i)
 					buf[i] = 0;
+
 				half[0] = 0;
 				half[1] = 0;
 				p = words / 2;
@@ -221,6 +220,7 @@ namespace FrankHileman.MedianFilter2D
 					Debug.Assert((buf[i] & (ONE64 << j)) == 0);
 				else
 					Debug.Assert((buf[i] & (ONE64 << j)) != 0);
+
 				buf[i] ^= ONE64 << j;
 				int halfIndex = i >= p ? 1 : 0;
 				half[halfIndex] += op;
@@ -260,11 +260,14 @@ namespace FrankHileman.MedianFilter2D
 
 			// Size of buf.
 			readonly int words;
+
 			// Bit number s is on iff element s is inside the window.
 			readonly ulong[] buf;
+
 			// half[0] = popcount of buf[0] ... buf[p-1]
 			// half[1] = popcount of buf[p] ... buf[words-1]
 			readonly int[] half = new int[2];
+
 			// The current guess is that the median is in buf[p].
 			int p;
 		}
@@ -313,6 +316,7 @@ namespace FrankHileman.MedianFilter2D
 				int total = window.size();
 				if (total == 0)
 					return double.NaN;
+
 				int goal1 = (total - 1) / 2;
 				int goal2 = (total - 0) / 2;
 				int med1 = window.find(goal1);
@@ -330,6 +334,7 @@ namespace FrankHileman.MedianFilter2D
 			readonly Entry[] sorted;
 			readonly int[] rank;
 			readonly Window window;
+
 			//readonly int bb; // not used
 			int size;
 			const int NAN_MARKER = -1;
@@ -381,10 +386,8 @@ namespace FrankHileman.MedianFilter2D
 			{
 				wr.init_start();
 				for (int y = 0; y < by.size; ++y)
-				{
 					for (int x = 0; x < bx.size; ++x)
 						wr.init_feed(input[coord(x, y)], pack(x, y));
-				}
 				wr.init_finish();
 			}
 
@@ -429,7 +432,9 @@ namespace FrankHileman.MedianFilter2D
 					if (right)
 					{
 						if (x + 1 == bx.b1)
+						{
 							break;
+						}
 					}
 					if (right)
 					{
@@ -463,13 +468,11 @@ namespace FrankHileman.MedianFilter2D
 				}
 			}
 
-			void set_med(int x, int y)
-				=> output[coord(x, y)] = wr.get_med();
+			void set_med(int x, int y) => output[coord(x, y)] = wr.get_med();
 
 			int pack(int x, int y) => y * bx.size + x;
 
-			int coord(int x, int y)
-				=> (y + by.start) * bx.dim.size + x + bx.start;
+			int coord(int x, int y) => (y + by.start) * bx.dim.size + x + bx.start;
 
 			readonly WindowRank wr;
 			readonly BDim bx;
@@ -500,6 +503,7 @@ namespace FrankHileman.MedianFilter2D
 				wr.init_start();
 				for (int x = 0; x < bx.size; ++x)
 					wr.init_feed(input[coord(x)], pack(x));
+
 				wr.init_finish();
 			}
 
@@ -521,9 +525,11 @@ namespace FrankHileman.MedianFilter2D
 				{
 					if (x >= bx.dim.h)
 						wr.update(-1, pack(x - bx.dim.h));
+
 					++x;
 					if (x + bx.dim.h < bx.size)
 						wr.update(+1, pack(x + bx.dim.h));
+
 					set_med(x);
 				}
 #endif

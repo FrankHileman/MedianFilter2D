@@ -1,14 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using FrankHileman.MedianFilter2D;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FrankHileman.MedianFilter2D;
 
 namespace FrankHileman.MedianFilter2DTests
 {
 	[TestClass]
 	public class QuickTest
 	{
-		static void compare(int l, double[] output, double[] expected)
+		static void Compare(int l, double[] output, double[] expected)
 		{
 			for (int i = 0; i < l; ++i)
 			{
@@ -18,16 +16,16 @@ namespace FrankHileman.MedianFilter2DTests
 			}
 		}
 
-		static void check_1d(int x, int hx, double[] input, double[] output, double[] expected)
+		static void Check1d(int x, int hx, double[] input, double[] output, double[] expected)
 		{
-			new Filter().median_filter_1d(x, hx, 0, input, output);
-			compare(x, output, expected);
+			new Filter().MedianFilter1d(x, hx, 0, input, output);
+			Compare(x, output, expected);
 		}
 
-		static void check_2d(int x, int y, int hx, int hy, double[] input, double[] output, double[] expected)
+		static void Check2d(int x, int y, int hx, int hy, double[] input, double[] output, double[] expected)
 		{
-			new Filter().median_filter_2d(x, y, hx, hy, 0, input, output);
-			compare(x * y, output, expected);
+			new Filter().MedianFilter2d(x, y, hx, hy, 0, input, output);
+			Compare(x * y, output, expected);
 		}
 
 		[TestMethod]
@@ -38,23 +36,23 @@ namespace FrankHileman.MedianFilter2DTests
 			double X = double.NaN;
 			double[] input = new double[x * y];
 			double[] output = new double[x * y];
-			check_2d(x, y, 0, 0, input, output, input);
-			check_2d(x, y, 1, 1, input, output, input);
-			check_2d(x, y, 100, 0, input, output, input);
-			check_2d(x, y, 0, 100, input, output, input);
-			check_2d(x, y, 100, 100, input, output, input);
+			Check2d(x, y, 0, 0, input, output, input);
+			Check2d(x, y, 1, 1, input, output, input);
+			Check2d(x, y, 100, 0, input, output, input);
+			Check2d(x, y, 0, 100, input, output, input);
+			Check2d(x, y, 100, 100, input, output, input);
 			input[0] = 1;
-			check_2d(x, y, 0, 0, input, output, input);
-			check_2d(x, y, 1, 1, input, output, input);
-			check_2d(x, y, 100, 0, input, output, input);
-			check_2d(x, y, 0, 100, input, output, input);
-			check_2d(x, y, 100, 100, input, output, input);
+			Check2d(x, y, 0, 0, input, output, input);
+			Check2d(x, y, 1, 1, input, output, input);
+			Check2d(x, y, 100, 0, input, output, input);
+			Check2d(x, y, 0, 100, input, output, input);
+			Check2d(x, y, 100, 100, input, output, input);
 			input[0] = X;
-			check_2d(x, y, 0, 0, input, output, input);
-			check_2d(x, y, 1, 1, input, output, input);
-			check_2d(x, y, 100, 0, input, output, input);
-			check_2d(x, y, 0, 100, input, output, input);
-			check_2d(x, y, 100, 100, input, output, input);
+			Check2d(x, y, 0, 0, input, output, input);
+			Check2d(x, y, 1, 1, input, output, input);
+			Check2d(x, y, 100, 0, input, output, input);
+			Check2d(x, y, 0, 100, input, output, input);
+			Check2d(x, y, 100, 100, input, output, input);
 		}
 
 		[TestMethod]
@@ -152,36 +150,36 @@ namespace FrankHileman.MedianFilter2DTests
 				0,0,0,1,1,1,0,0,0,0
 			};
 			double[] output = new double[x * y];
-			check_2d(x, y, 0, 0, input, output, input);
-			check_2d(x, y, 0, 1, input, output, exp01);
-			check_2d(x, y, 0, 2, input, output, exp11);
-			check_2d(x, y, 0, 3, input, output, exp11);
-			check_2d(x, y, 0, 4, input, output, exp11);
-			check_2d(x, y, 0, 99, input, output, exp11);
-			check_2d(x, y, 1, 0, input, output, exp10);
-			check_2d(x, y, 2, 0, input, output, exp20);
-			check_2d(x, y, 3, 0, input, output, exp30);
-			check_2d(x, y, 4, 0, input, output, exp40);
-			check_2d(x, y, 5, 0, input, output, exp50);
-			check_2d(x, y, 8, 0, input, output, zero);
-			check_2d(x, y, 99, 0, input, output, zero);
-			check_2d(x, y, 1, 1, input, output, exp11);
-			check_2d(x, y, 2, 2, input, output, exp11);
-			check_2d(x, y, 4, 4, input, output, zero);
-			check_2d(x * y, 1, 1, 0, input, output, exp1);
-			check_2d(x * y, 1, 1, 1, input, output, exp1);
-			check_2d(x * y, 1, 1, 99, input, output, exp1);
-			check_2d(x * y, 1, 2, 0, input, output, exp2);
-			check_2d(x * y, 1, 2, 1, input, output, exp2);
-			check_2d(x * y, 1, 2, 99, input, output, exp2);
-			check_2d(1, x * y, 0, 1, input, output, exp1);
-			check_2d(1, x * y, 1, 1, input, output, exp1);
-			check_2d(1, x * y, 99, 1, input, output, exp1);
-			check_2d(1, x * y, 0, 2, input, output, exp2);
-			check_2d(1, x * y, 1, 2, input, output, exp2);
-			check_2d(1, x * y, 99, 2, input, output, exp2);
-			check_1d(x * y, 1, input, output, exp1);
-			check_1d(x * y, 2, input, output, exp2);
+			Check2d(x, y, 0, 0, input, output, input);
+			Check2d(x, y, 0, 1, input, output, exp01);
+			Check2d(x, y, 0, 2, input, output, exp11);
+			Check2d(x, y, 0, 3, input, output, exp11);
+			Check2d(x, y, 0, 4, input, output, exp11);
+			Check2d(x, y, 0, 99, input, output, exp11);
+			Check2d(x, y, 1, 0, input, output, exp10);
+			Check2d(x, y, 2, 0, input, output, exp20);
+			Check2d(x, y, 3, 0, input, output, exp30);
+			Check2d(x, y, 4, 0, input, output, exp40);
+			Check2d(x, y, 5, 0, input, output, exp50);
+			Check2d(x, y, 8, 0, input, output, zero);
+			Check2d(x, y, 99, 0, input, output, zero);
+			Check2d(x, y, 1, 1, input, output, exp11);
+			Check2d(x, y, 2, 2, input, output, exp11);
+			Check2d(x, y, 4, 4, input, output, zero);
+			Check2d(x * y, 1, 1, 0, input, output, exp1);
+			Check2d(x * y, 1, 1, 1, input, output, exp1);
+			Check2d(x * y, 1, 1, 99, input, output, exp1);
+			Check2d(x * y, 1, 2, 0, input, output, exp2);
+			Check2d(x * y, 1, 2, 1, input, output, exp2);
+			Check2d(x * y, 1, 2, 99, input, output, exp2);
+			Check2d(1, x * y, 0, 1, input, output, exp1);
+			Check2d(1, x * y, 1, 1, input, output, exp1);
+			Check2d(1, x * y, 99, 1, input, output, exp1);
+			Check2d(1, x * y, 0, 2, input, output, exp2);
+			Check2d(1, x * y, 1, 2, input, output, exp2);
+			Check2d(1, x * y, 99, 2, input, output, exp2);
+			Check1d(x * y, 1, input, output, exp1);
+			Check1d(x * y, 2, input, output, exp2);
 		}
 
 		[TestMethod]
@@ -240,24 +238,24 @@ namespace FrankHileman.MedianFilter2DTests
 				0,0,0,1,1,1,0,0,0,0
 			};
 			double[] output = new double[x * y];
-			check_2d(x, y, 0, 0, input, output, input);
-			check_2d(x, y, 0, 1, input, output, exp01);
-			check_2d(x, y, 1, 0, input, output, exp10);
-			check_2d(x, y, 1, 1, input, output, exp11);
-			check_2d(x * y, 1, 1, 0, input, output, exp1);
-			check_2d(x * y, 1, 1, 1, input, output, exp1);
-			check_2d(x * y, 1, 1, 99, input, output, exp1);
-			check_2d(x * y, 1, 2, 0, input, output, exp2);
-			check_2d(x * y, 1, 2, 1, input, output, exp2);
-			check_2d(x * y, 1, 2, 99, input, output, exp2);
-			check_2d(1, x * y, 0, 1, input, output, exp1);
-			check_2d(1, x * y, 1, 1, input, output, exp1);
-			check_2d(1, x * y, 99, 1, input, output, exp1);
-			check_2d(1, x * y, 0, 2, input, output, exp2);
-			check_2d(1, x * y, 1, 2, input, output, exp2);
-			check_2d(1, x * y, 99, 2, input, output, exp2);
-			check_1d(x * y, 1, input, output, exp1);
-			check_1d(x * y, 2, input, output, exp2);
+			Check2d(x, y, 0, 0, input, output, input);
+			Check2d(x, y, 0, 1, input, output, exp01);
+			Check2d(x, y, 1, 0, input, output, exp10);
+			Check2d(x, y, 1, 1, input, output, exp11);
+			Check2d(x * y, 1, 1, 0, input, output, exp1);
+			Check2d(x * y, 1, 1, 1, input, output, exp1);
+			Check2d(x * y, 1, 1, 99, input, output, exp1);
+			Check2d(x * y, 1, 2, 0, input, output, exp2);
+			Check2d(x * y, 1, 2, 1, input, output, exp2);
+			Check2d(x * y, 1, 2, 99, input, output, exp2);
+			Check2d(1, x * y, 0, 1, input, output, exp1);
+			Check2d(1, x * y, 1, 1, input, output, exp1);
+			Check2d(1, x * y, 99, 1, input, output, exp1);
+			Check2d(1, x * y, 0, 2, input, output, exp2);
+			Check2d(1, x * y, 1, 2, input, output, exp2);
+			Check2d(1, x * y, 99, 2, input, output, exp2);
+			Check1d(x * y, 1, input, output, exp1);
+			Check1d(x * y, 2, input, output, exp2);
 		}
 
 		[TestMethod]
@@ -308,11 +306,11 @@ namespace FrankHileman.MedianFilter2DTests
 				0,0,0,1,1,1,0,0,0,0
 			};
 			double[] output = new double[x * y];
-			check_2d(x, y, 0, 0, input, output, input);
-			check_2d(x, y, 0, 1, input, output, exp01);
-			check_2d(x, y, 1, 0, input, output, exp10);
-			check_2d(x, y, 1, 1, input, output, exp11);
-			check_2d(x, y, 2, 2, input, output, exp22);
+			Check2d(x, y, 0, 0, input, output, input);
+			Check2d(x, y, 0, 1, input, output, exp01);
+			Check2d(x, y, 1, 0, input, output, exp10);
+			Check2d(x, y, 1, 1, input, output, exp11);
+			Check2d(x, y, 2, 2, input, output, exp22);
 		}
 	}
 }
