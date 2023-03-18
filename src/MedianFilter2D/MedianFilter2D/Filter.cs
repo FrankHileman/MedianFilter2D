@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace FrankHileman.MedianFilter2D
 {
 	// Derived from: https://github.com/suomela/mf2d
-	public sealed class Filter
+	public static class Filter
 	{
 		const ulong ONE64 = 1;
 
@@ -88,7 +88,7 @@ namespace FrankHileman.MedianFilter2D
 		/// 0 <= j < <paramref name="y"/> is located at
 		/// <paramref name="input"/>[j*x + i] and <paramref name="output"/>[j*x + i].
 		/// </remarks>
-		public void MedianFilter2d(int x, int y, int hx, int hy, int blockhint, double[] input, double[] output)
+		public static void MedianFilter2d(int x, int y, int hx, int hy, int blockhint, double[] input, double[] output)
 		{
 			int h = Math.Max(hx, hy);
 			int blocksize = blockhint > 0 ? blockhint : choose_blocksize_2d(h);
@@ -103,13 +103,13 @@ namespace FrankHileman.MedianFilter2D
 		/// <param name="blockhint">preferred block size, 0 = pick automatically</param>
 		/// <param name="input">input array<param>
 		/// <param name="output">output array</param>
-		public void MedianFilter1d(int x, int hx, int blockhint, double[] input, double[] output)
+		public static void MedianFilter1d(int x, int hx, int blockhint, double[] input, double[] output)
 		{
 			int blocksize = blockhint > 0 ? blockhint : choose_blocksize_1d(hx);
 			MedianFilter1dCore(x, hx, blocksize, input, output);
 		}
 
-		void MedianFilter2dCore(int x, int y, int hx, int hy, int b, double[] input, double[] output)
+		static void MedianFilter2dCore(int x, int y, int hx, int hy, int b, double[] input, double[] output)
 		{
 			if (2 * hx + 1 > b)
 				throw new ArgumentOutOfRangeException(nameof(hx), "window too large for this block size");
@@ -128,7 +128,7 @@ namespace FrankHileman.MedianFilter2D
 			}
 		}
 
-		void MedianFilter1dCore(int x, int hx, int b, double[] input, double[] output)
+		static void MedianFilter1dCore(int x, int hx, int b, double[] input, double[] output)
 		{
 			if (2 * hx + 1 > b)
 				throw new ArgumentOutOfRangeException(nameof(hx), "window too large for this block size");
