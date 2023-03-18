@@ -72,6 +72,22 @@ namespace FrankHileman.MedianFilter2D
 			return MultiplyDeBruijnBitPosition[((ulong)((long)b & -(long)b) * DeBruijnSequence) >> 58];
 		}
 
+		/// <summary>
+		/// Run a median filter over the specified two dimensional image, putting the result into another image.
+		/// </summary>
+		/// <param name="x">image width in pixels.</param>
+		/// <param name="y">image height in pixels.</param>
+		/// <param name="hx">window radius width</param>
+		/// <param name="hy">window radius height</param>
+		/// <param name="blockhint">preferred block size, 0 = pick automatically</param>
+		/// <param name="input">input image<param>
+		/// <param name="output">output image</param>
+		/// <remarks>
+		/// Total window size will be (2*<paramref name="hx"/>+1) * (2*<paramref name="hy"/>+1) pixels.
+		/// Pixel (i,j) for 0 <= i < <paramref name="x"/> and 
+		/// 0 <= j < <paramref name="y"/> is located at
+		/// <paramref name="input"/>[j*x + i] and <paramref name="output"/>[j*x + i].
+		/// </remarks>
 		public void MedianFilter2d(int x, int y, int hx, int hy, int blockhint, double[] input, double[] output)
 		{
 			int h = Math.Max(hx, hy);
@@ -79,6 +95,14 @@ namespace FrankHileman.MedianFilter2D
 			MedianFilter2dCore(x, y, hx, hy, blocksize, input, output);
 		}
 
+		/// <summary>
+		/// Run a median filter over the specified array, putting the result into another array.
+		/// </summary>
+		/// <param name="x">array width in pixels.</param>
+		/// <param name="hx">window radius width</param>
+		/// <param name="blockhint">preferred block size, 0 = pick automatically</param>
+		/// <param name="input">input array<param>
+		/// <param name="output">output array</param>
 		public void MedianFilter1d(int x, int hx, int blockhint, double[] input, double[] output)
 		{
 			int blocksize = blockhint > 0 ? blockhint : choose_blocksize_1d(hx);
