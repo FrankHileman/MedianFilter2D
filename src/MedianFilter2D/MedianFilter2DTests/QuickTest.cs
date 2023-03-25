@@ -18,13 +18,13 @@ namespace FrankHileman.MedianFilter2DTests
 
 		static void Check1d(int x, int hx, double[] input, double[] output, double[] expected)
 		{
-			new Filter().MedianFilter1d(x, hx, 0, input, output);
+			Filter.MedianFilter1d(x, hx, 0, input, output);
 			Compare(x, output, expected);
 		}
 
 		static void Check2d(int x, int y, int hx, int hy, double[] input, double[] output, double[] expected)
 		{
-			new Filter().MedianFilter2d(x, y, hx, hy, 0, input, output);
+			Filter.MedianFilter2d(x, y, hx, hy, 0, input, output);
 			Compare(x * y, output, expected);
 		}
 
