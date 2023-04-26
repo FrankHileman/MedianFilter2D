@@ -4,6 +4,9 @@ using System.Diagnostics;
 namespace FrankHileman.MedianFilter2D
 {
 	// Derived from: https://github.com/suomela/mf2d
+	/// <summary>
+	/// Provides 1D and 2D median filtering operations.
+	/// </summary>
 	public static class Filter
 	{
 		const ulong ONE64 = 1;
