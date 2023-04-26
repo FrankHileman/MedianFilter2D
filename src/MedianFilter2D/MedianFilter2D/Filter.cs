@@ -14,17 +14,25 @@ namespace FrankHileman.MedianFilter2D
 
 		static int choose_blocksize_2d(int h) => 4 * (h + 2);
 
-		// Find nth bit that is set and return its index
-		// (no such bit: output undefined)
-
+		/// <summary>
+		/// Find nth bit that is set and return its index.
+		/// If no such bit: output is undefined.
+		/// </summary>
+		/// <param name="x">Value in which bits are searched.</param>
+		/// <param name="n">Number of set bits to search for.</param>
+		/// <returns>The index of the <paramref name="n"/>th bit that is set.</returns>
 		static int findnth64(ulong x, int n)
 		{
 			for (int i = 0; i < n; ++i)
 				x &= x - 1;
 			return BitScanForward(x);
-			//return __builtin_ctzll(x);
 		}
 
+		/// <summary>
+		/// Returns the number of set bits in the specified value.
+		/// </summary>
+		/// <param name="value">Value to be analyzed.</param>
+		/// <returns>The number of bits set in <paramref name="value"/>.</returns>
 		static int popcnt64(ulong value)
 		{
 			// since we don't have access to BitOperations in the .net framework,
@@ -40,7 +48,6 @@ namespace FrankHileman.MedianFilter2D
 			value = (((value + (value >> 4)) & c3) * c4) >> 56;
 
 			return (int)value;
-			//return __builtin_popcountll(x);
 		}
 
 		// NOTE: GCC built in functions are described here:
@@ -109,12 +116,14 @@ namespace FrankHileman.MedianFilter2D
 			MedianFilter1dCore(x, hx, blocksize, input, output);
 		}
 
+		const string _windowTooLarge = "window too large for this block size";
+
 		static void MedianFilter2dCore(int x, int y, int hx, int hy, int b, double[] input, double[] output)
 		{
 			if (2 * hx + 1 > b)
-				throw new ArgumentOutOfRangeException(nameof(hx), "window too large for this block size");
+				throw new ArgumentOutOfRangeException(nameof(hx), _windowTooLarge);
 			if (2 * hy + 1 > b)
-				throw new ArgumentOutOfRangeException(nameof(hy), "window too large for this block size");
+				throw new ArgumentOutOfRangeException(nameof(hy), _windowTooLarge);
 
 			var dimx = new Dim(b, x, hx);
 			var dimy = new Dim(b, y, hy);
@@ -131,7 +140,7 @@ namespace FrankHileman.MedianFilter2D
 		static void MedianFilter1dCore(int x, int hx, int b, double[] input, double[] output)
 		{
 			if (2 * hx + 1 > b)
-				throw new ArgumentOutOfRangeException(nameof(hx), "window too large for this block size");
+				throw new ArgumentOutOfRangeException(nameof(hx), _windowTooLarge);
 
 			var dimx = new Dim(b, x, hx);
 			{
